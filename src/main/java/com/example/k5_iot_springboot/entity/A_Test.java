@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// ORM 에서 사용되는 주요 어노테이션
+// ORM에서 사용되는 주요 어노테이션
 // 1. @Entity
 //      : 클래스를 DB 테이블과 매핑할 때 사용
 //      - name 옵션 추가
@@ -17,7 +17,7 @@ import lombok.Setter;
 //      - 생략 시 기본으로 클래스 이름이 테이블 명과 매핑
 //      - name 옵션 추가
 //          : 테이블명 지정
-@Table(name = "tast")
+@Table(name = "test")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -28,15 +28,15 @@ public class A_Test {
     //      - 필드에 첨부, 옵션 없이 사용 가능
     //      - 다른 어노테이션과 함께 기본키 생성 방식이나 타입 지정 가능
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // 2) GeneratedValue
-    //          : MySQL의 AUTO_INCREMENT에 맞취 자동 증가
-    @Column(name = "tast_id", updatable = false)
+    // 2) @GeneratedValue
+    //      : MySQL의 AUTO_INCREMENT에 맞춰 자동 증가
+    @Column(name = "test_id", updatable = false)
     // 3) @Column
     //      : 필드를 특정 테이블의 열과 매핑
     //      - 생략 시 기본으로 필드 이름이 열 이름으로 사용 (lowerCamelCase >> lower_snake_case)
-    //      +)  옵션
+    //      +) 옵션
     //          > name 옵션: 열 이름 지정
-    //          > nullable  옵션: 열이 null 값을 허용할지 여부 설정 (기본값: true)
+    //          > nullable 옵션: 열이 null 값을 허용할지 여부 설정 (기본값: true)
     //          > length 옵션: String 타입의 열 길이를 지정 (기본값: 255)
     //          > updatable 옵션: 열이 수정을 허용할지 여부 설정 (기본값: true)
     //          > unique 옵션: 해당 필드의 값이 유일해야 하는지 여부를 지정 (기본값: false)
