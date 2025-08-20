@@ -21,7 +21,6 @@ public record PostWithCommentCountResponseDto(
                 post.getAuthor(),
                 commentCount
         );
-
     }
 
     public static PostWithCommentCountResponseDto from(D_PostRepository.PostWithCommentCountProjection p) {

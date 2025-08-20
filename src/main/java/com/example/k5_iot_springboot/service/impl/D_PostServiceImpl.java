@@ -127,6 +127,53 @@ public class D_PostServiceImpl implements D_PostService {
         return ResponseDto.setSuccess("SUCCESS", result);
     }
 
+    @Override
+    public ResponseDto<List<PostListResponseDto>> searchPostsByCommentKeyword(String keyword) {
+
+        // 1) 입력값 정제/검증
+        String clean = (keyword == null) ? "" : keyword.trim();
+
+        if (clean.isEmpty()) {
+            throw new IllegalArgumentException("검색 키워드는 비어 있을 수 없습니다. ");
+        }
+
+        if (clean.length() > 100) {
+            throw new IllegalArgumentException("검색 키워드는 100자 이하여야 합니다.");
+        }
+
+        var rows = postRepository.findByCommentKeyword(clean);
+
+        List<PostListResponseDto> result = rows.stream()
+                .map(PostListResponseDto::from)
+                .toList();
+
+        return ResponseDto.setSuccess("SUCCESS", result);
+    }
+
+    @Override
+    public ResponseDto<List<PostWithCommentCountResponseDto>> getAuthorPostsWithMinComments(String author, int minCount) {
+        // ------- 입력 검증 (GlobalExceptionHandler로 전달할 표준 예외 사용) -------
+        String cleanAuthor = requireNonBlank(author, "author").trim();
+        if (minCount < 0) throw new IllegalArgumentException("minCount는 0 이상이어야 합니다.");
+
+        // ------- 리포지토리 호출 (네이티브 쿼리, createdAt 제외) -------
+        // 예시 메서드명: findAuthorPostsWithMinComments_Native
+        // 반환 타입: List<PostWithCommentCountNoCreatedAtProjection>
+        var rows = postRepository.findAuthorPostsWithMinCount(cleanAuthor, minCount);
+
+        // ------- 매핑 (createdAt이 없으므로 null 또는 DTO 시그니처에 맞춰 처리) -------
+        List<PostWithCommentCountResponseDto> result = rows.stream()
+                .map(r -> new PostWithCommentCountResponseDto(
+                        r.getPostId(),
+                        r.getTitle(),
+                        r.getAuthor(),
+                        r.getCommentCount() == null ? 0 : r.getCommentCount().longValue()
+                ))
+                .toList();
+
+        return ResponseDto.setSuccess("SUCCESS", result);
+    }
+
     // === 내부 유틸 메서드 === //
     private Long requirePositiveId(Long id) {
         if (id == null || id <= 0) throw new IllegalArgumentException("id는 반드시 양수여야 합니다.");
