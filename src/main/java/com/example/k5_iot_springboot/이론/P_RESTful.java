@@ -62,7 +62,7 @@ package com.example.k5_iot_springboot.이론;
         - 게시글 목록: GET /api/v1/posts?category=notice&search=java&page=1&size=10
         - 게시들 수정: PUT /api/v1/posts/{postsId}
         - 댓글 추가: POST /api/v`/posts/{postId}/comments
-        
+
 */
 public class P_RESTful {
 }
