@@ -35,24 +35,41 @@ public class F_BoardServiceImpl implements F_BoardService {
         if (sortParams != null && sortParams.length > 0) { // 빈 배열이 아닌 경우 (요소 1개 이상)
             // 정렬 순서를 보장할 리스트 - 여러 정렬 기준을 저장 (순서 보장!)
             List<Sort.Order> orders = new ArrayList<>();
-            for (String p: sortParams) {
-                if (p == null || p.isBlank()) continue;
-                String[] t = p.split(",");
-                String property = t[0].trim();
 
-                // 화이트리스트에 없는 속성은 무시
-                if (!ALLOWED_SORTS.contains(property)) continue;
+            for(int i = 0; i < sortParams.length; i++) {
+                String value = sortParams[i];
 
-                Sort.Direction dir = Sort.Direction.DESC;
-                // 기본 정렬 방향을 DESC - 피드/게시물은 최신순 정렬이 일반 (권장)
-                if (t.length > 1) { // 정렬기준이 존재
-                    dir = "asc".equalsIgnoreCase(t[1].trim())
-                            ? Sort.Direction.ASC
-                            : Sort.Direction.DESC;
+                String property;
+                String direction;
+
+                if (value.contains(",")) {
+                    // 다중 정렬 - 정렬 기준이 2개 이상
+                    // : & 를 기준으로 배열 생성
+                    // : "title,asc"
+                    String[] parts = value.split(",", 2);
+                    property = parts[0].trim();
+                    direction = parts.length > 1 ? parts[1].trim() : "desc";
+                } else {
+                    // 단일 정렬 - 정렬 기준이 1개
+                    // : , 를 기준으로 배열 생성
+                    // ["title", "asc"]
+                    property = value.trim();
+                    String next = (i + 1 < sortParams.length) ? sortParams[i + 1].trim() : "";
+                    if ("desc".equalsIgnoreCase(next) || "asc".equalsIgnoreCase(next)) {
+                        direction = next;
+                        i++; // 방향 소비
+                    } else {
+                        direction = "desc"; // 기본값 설정
+                    }
                 }
-                orders.add(new Sort.Order(dir, property));
-                // : 파싱한 정렬 기준 한 건을 Sort.Order 객체로 만들어 목록에 추가
-                // - 여러 건이 쌓이면 ORDER BY prop1 dir1, prop2 dir2 ... 순서대로 적용
+
+                if (ALLOWED_SORTS.contains(property)) {
+                    Sort.Direction dir = "desc".equalsIgnoreCase(direction)
+                            ? Sort.Direction.DESC
+                            : Sort.Direction.ASC;
+
+                    orders.add(new Sort.Order(dir, property));
+                }
             }
             if (!orders.isEmpty()) sort = Sort.by(orders); // 비워지지 않은 경우 sort값 재할당
         }
@@ -123,6 +140,13 @@ public class F_BoardServiceImpl implements F_BoardService {
         return ResponseDto.setSuccess("SUCCESS", result);
     }
 
+    // cf) Page<T> VS Slice<T>
+    // 1) Page<T>
+    //      : 전체 개수(count 쿼리)까지 실행해서 가져옴
+
+    // 2) Slice<T>
+    //      : count 쿼리 실행 X, 데이터 개수를 size + 1로 요청해서 다음 페이지 존재 여부만 판단
+
     @Override
     public ResponseDto<BoardResponseDto.PageResponse> getBoardsPage(int page, int size, String[] sort) {
         Pageable pageable = buildPageable(page, size, sort);
@@ -130,10 +154,11 @@ public class F_BoardServiceImpl implements F_BoardService {
         // cf) Pageable 인터페이스
         //      : 페이징과 정렬 정보를 추상화한 인터페이스
         //      >> 현재 페이지 번호, 한 페이지의 크기, 정렬 정보 반환
-        //          , 다음 페이지 객체 생성, 이전 페이지 객체 생성
+        //              , 다음 페이지 객체 생성, 이전 페이지 객체 생성
         //      >> 특징
         //          : 실제 구현체는 PageRequest 사용 (PageRequest.of(page, size, sort))
         //          : JpaRepository의 findAll(Pageable pageable) 메서드에 전달
+
 
         Page<F_Board> pageResult = boardRepository.findAll(pageable);
 
@@ -151,21 +176,15 @@ public class F_BoardServiceImpl implements F_BoardService {
         return ResponseDto.setSuccess("SUCCESS", result);
     }
 
-    // cf) Page<T> VS Slice<T>
-    // 1) Page<T>
-    //      : 전체 개수(count 쿼리)까지 실행해서 가져옴
-
-    // 2) Slice<T>
-    //      : count 쿼리 실행 X, 데이터 개수를 size + 1로 요청해서 다음 페이지 존재 여부 반환
-
     @Override
     public ResponseDto<BoardResponseDto.SliceResponse> getBoardsByCursor(Long cursorId, int size) {
         // 커서는 최신순 id 기준으로 진행 (성능이 좋은 PK 정렬)
-        // - 첫 호추리 cursorId == null (Long.MAX_VALUE로 간주: 최신부터)
+        // - 첫 호출: cursorId == null (Long.MAX_VALUE로 간주: 최신부터)
         long startId = (cursorId == null) ? Long.MAX_VALUE : cursorId;
 
         Slice<F_Board> slice = boardRepository
                 .findByIdLessThanOrderByIdDesc(startId, PageRequest.of(0, size));
+
         List<BoardResponseDto.SummaryResponse> content = slice.getContent().stream()
                 .map(BoardResponseDto.SummaryResponse::from)
                 .toList();
@@ -180,6 +199,7 @@ public class F_BoardServiceImpl implements F_BoardService {
                 .hasNext(slice.hasNext())
                 .nextCursor(nextCursor)
                 .build();
+
         return ResponseDto.setSuccess("SUCCESS", result);
     }
 }
