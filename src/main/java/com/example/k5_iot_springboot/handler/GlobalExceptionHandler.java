@@ -7,6 +7,7 @@ import com.example.k5_iot_springboot.dto.ResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.expression.AccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -82,7 +83,7 @@ public class GlobalExceptionHandler {
     }
 
     // === 403 Forbidden: 접근 거부 === //
-    @ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler({ AccessDeniedException.class, AccessException.class })
     public ResponseEntity<ResponseDto<Object>> handleAccessDenied(AccessDeniedException e) {
         log.warn("AccessDenied: {}", e.getMessage());
         return fail(ErrorCode.FORBIDDEN, null, null);
