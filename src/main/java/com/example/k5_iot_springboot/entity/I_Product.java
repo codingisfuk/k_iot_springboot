@@ -36,10 +36,12 @@ public class I_Product extends BaseTimeEntity {
         this.name = name;
         this.price = price;
     }
+
     public void setName(String name) {
         this.name = name;
     }
-    public void setPrice(int price){
+
+    public void setPrice(int price) {
         this.price = price;
     }
 }

@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.*;
 public class I_StockController {
     private final I_StockService stockService;
 
-    // 증감식 조정 - 현재 제고에 delta 만큼 더하거나 뺴는 연산
+    // 증감식 조정 - 현재 재고에 delta 만큼 더하거나 빼는 연산
     // 예) 입고(+10), 출고(-4), 반품(+1) 등 이벤트형 변경
     @PostMapping(ApiMappingPattern.Stocks.ADJUST)
     public ResponseEntity<ResponseDto<StockResponse.Response>> adjust(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @RequestBody StockRequest.StockAdjust req
-            ) {;
+    ) {
         ResponseDto<StockResponse.Response> response = stockService.adjust(userPrincipal, req);
         return ResponseEntity.ok(response);
     }

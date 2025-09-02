@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(
-        name = "order_Items",
+        name = "order_items",
         indexes = {
-                @Index(name = "idx_orders_items_order", columnList = "order_id"),
-                @Index(name = "idx_orders_items_product", columnList = "product_id")
+                @Index(name = "idx_order_items_order", columnList = "order_id"),
+                @Index(name = "idx_order_items_product", columnList = "product_id")
         },
         uniqueConstraints = {
                 @UniqueConstraint(name = "uq_order_product", columnNames = {"order_id", "product_id"})
@@ -22,22 +22,19 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class I_OrderItem extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false,
-        foreignKey = @ForeignKey(name = "fk_order_items_order"))
-
+            foreignKey = @ForeignKey(name = "fk_order_items_order"))
     private I_Order order;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_order_items_product"))
-
     private I_Product product;
 
     @Min(1)
@@ -47,5 +44,4 @@ public class I_OrderItem extends BaseTimeEntity {
     void setOrder(I_Order order) {
         this.order = order;
     }
-
 }

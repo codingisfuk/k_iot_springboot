@@ -1,7 +1,5 @@
 package com.example.k5_iot_springboot.common.constants;
 
-import com.example.k5_iot_springboot.이론._gitignore;
-
 // URL 설계 패턴
 // : RESTful하게 API 경로를 규칙적으로 설계하는 것
 // - 각 Controller의 고유 경로를 지정
@@ -69,10 +67,9 @@ public class ApiMappingPattern {
         public static final String ID_ONLY = "/{productId}";
     }
 
-    // == 6. 제고(I_Stock) == //
+    // == 6. 재고(I_Stock) == //
     public static final class Stocks {
-        private Stocks() {
-        }
+        private Stocks() {}
 
         public static final String ROOT = BASE + "/stocks";
         public static final String ADJUST = "/adjust";

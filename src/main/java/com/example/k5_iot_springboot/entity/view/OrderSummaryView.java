@@ -10,11 +10,11 @@ import org.hibernate.annotations.Immutable;
 
 import java.time.LocalDateTime;
 
-/*
-* order_summary 뷰 매핑용 읽기 전용 엔티티
-* : 조인 결과(행 단위) 제공
-* - 리포트/목록에 활용
-* */
+/**
+ * order_summary 뷰 매핑용 읽기 전용 엔티티
+ * : 조인 결과(행 단위) 제공
+ * - 리포트/목록에 활용
+ * */
 @Entity
 @Table(name = "order_summary")
 @Getter
@@ -29,10 +29,8 @@ public class OrderSummaryView {
     private String product_name;
     private Integer quantity;
     private Integer price;
-    private Integer total_price;
+    private Long total_price;
 
     @Column(name = "ordered_at")
     private LocalDateTime orderAt;
-
-
 }

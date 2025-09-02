@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Immutable
 public class OrderTotalsView {
     @Id @Column(name = "order_id")
-    private Long oderId;
+    private Long orderId;
 
     private Long user_id;
     private String order_status;

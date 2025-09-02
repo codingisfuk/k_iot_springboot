@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 제품 등록/수정/조회
- * 권한 'USER', 'MANAGER', 'ADMIN' 중 (등록, 수정)은 ADMIN만 (조회)는 누구나 가능
+ * : 권한 'USER', 'MANAGER', 'ADMIN' 중 (등록, 수정)은 ADMIN만 (조회)는 누구나 가능
  * */
 @RestController
 @RequestMapping(ApiMappingPattern.Products.ROOT)
@@ -25,14 +25,13 @@ public class I_ProductController {
 
     // 제품 등록
     @PostMapping
-    public ResponseEntity<ResponseDto<ProductRequest.DetailResponse>> create(
+    public ResponseEntity<ResponseDto<ProductResponse.DetailResponse>> create(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @RequestBody ProductRequest.Create req
     ) {
-        ResponseDto<ProductRequest.DetailResponse> response
+        ResponseDto<ProductResponse.DetailResponse> response
                 = productService.create(userPrincipal, req);
         return ResponseEntity.ok(response);
-
     }
 
     // 제품 수정
@@ -43,18 +42,17 @@ public class I_ProductController {
             @Valid @RequestBody ProductRequest.Update req
     ) {
         ResponseDto<ProductResponse.DetailResponse> response
-                = productService.update(productId, req);
+                = productService.update(productId, userPrincipal, req);
         return ResponseEntity.ok(response);
     }
 
     // 제품 조회
     @GetMapping(ApiMappingPattern.Products.ID_ONLY)
-    public ResponseEntity<ResponseDto<ProductRequest.DetailResponse>> getProductById(
+    public ResponseEntity<ResponseDto<ProductResponse.DetailResponse>> getProductById(
             @PathVariable Long productId
     ) {
-        ResponseDto<ProductRequest.DetailResponse> response
+        ResponseDto<ProductResponse.DetailResponse> response
                 = productService.get(productId);
         return ResponseEntity.ok(response);
     }
-
 }
