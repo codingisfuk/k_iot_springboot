@@ -1,13 +1,13 @@
-package com.example.k5_iot_springboot.security;
+package com.example.k5_iot_springboot.security; // 패키지 선언
 
-import com.example.k5_iot_springboot.entity.G_User;
-import org.springframework.lang.NonNull;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
+import com.example.k5_iot_springboot.entity.G_User; // 사용자 엔티티 클래스 임포트
+import org.springframework.lang.NonNull; // NonNull 어노테이션 임포트
+import org.springframework.security.core.GrantedAuthority; // GrantedAuthority 인터페이스 임포트
+import org.springframework.security.core.authority.SimpleGrantedAuthority; // SimpleGrantedAuthority 클래스 임포트
+import org.springframework.stereotype.Component; // 스프링 컴포넌트 임포트
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Collection; // 컬렉션 인터페이스 임포트
+import java.util.List; // 리스트 인터페이스 임포트
 
 /**
  * === UserPrincipalMapper ===
@@ -25,11 +25,11 @@ import java.util.List;
  *  -> 본 매퍼로 UserPrincipal 생성
  *  -> Authentication(Principal)에 주입되어 보안 컨텍스트에 저장
  * */
-@Component
-public class UserPrincipalMapper {
+@Component // 스프링이 해당 클래스를 관리하도록 지정, 의존성 주입
+public class UserPrincipalMapper { // UserPrincipal 매퍼 클래스
 
-    @NonNull
-    public UserPrincipal map(@NonNull G_User user) {
+    @NonNull // null이 아닌 값만 허용 (매개변수에 null 전달 시 NPE 발생)
+    public UserPrincipal map(@NonNull G_User user) { // G_User -> UserPrincipal 변환 메서드
 //        Collection<SimpleGrantedAuthority> authorities
 //                = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
@@ -47,15 +47,15 @@ public class UserPrincipalMapper {
                         })
                         .toList();
 
-        return UserPrincipal.builder()
-                .id(user.getId())
-                .username(user.getLoginId())
-                .password(user.getPassword())
-                .authorities(authorities)
-                .accountNonExpired(true)
-                .accountNonLocked(true)
-                .credentialsNonExpired(true)
-                .enabled(true)
-                .build();
+        return UserPrincipal.builder() // UserPrincipal 빌더 패턴으로 생성
+                .id(user.getId()) // PK
+                .username(user.getLoginId()) // 로그인 아이디
+                .password(user.getPassword()) // 해시 비밀번호
+                .authorities(authorities) // 권한
+                .accountNonExpired(true) // 계정 만료 여부 (true: 만료 안 됨)
+                .accountNonLocked(true) // 계정 잠금 여부 (true: 잠기지 않음)
+                .credentialsNonExpired(true) // 자격 증명 만료 여부 (true: 만료 안 됨)
+                .enabled(true) // 계정 활성화 여부 (true: 활성화)
+                .build(); // 빌더로 UserPrincipal 객체 생성 및 반환
     }
 }

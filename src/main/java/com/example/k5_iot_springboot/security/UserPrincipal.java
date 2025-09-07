@@ -1,14 +1,14 @@
-package com.example.k5_iot_springboot.security;
+package com.example.k5_iot_springboot.security; // 패키지 선언
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.fasterxml.jackson.annotation.JsonIgnore; // JSON 직렬화 시 무시할 필드 지정 어노테이션 임포트
+import lombok.Builder; // 빌더 패턴을 위한 Lombok 어노테이션 임포트
+import lombok.Getter; // 게터 자동 생성 어노테이션 임포트
+import lombok.ToString; // toString 자동 생성 어노테이션 임포트
+import org.springframework.security.core.GrantedAuthority; // 권한(Authority) 관련 인터페이스 임포트
+import org.springframework.security.core.userdetails.UserDetails; // UserDetails 인터페이스 임포트
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Collection; // 컬렉션 인터페이스 임포트
+import java.util.List; // 리스트 인터페이스 임포트
 
 /**
  * === UserPrincipal ===
@@ -39,7 +39,7 @@ import java.util.List;
  *  2) @JsonIgnore, @ToString(exclude="password")를 통해 비밀번호 유출을 2중 차단
  *  3) 빌더 사용: 가독성 향상, 테스트 용이
  * */
-@Getter
+@Getter // 게터 자동 생성
 @ToString(exclude = "password") // 로그 등에 password가 노출되지 않도록 ToString 제외
 public class UserPrincipal implements UserDetails {
     // UserDetails: 시큐리티가 요구하는 사용자 정보 인터페이스
@@ -47,7 +47,7 @@ public class UserPrincipal implements UserDetails {
 
     private final Long id;                                              // PK
     private final String username;                                      // 로그인 아이디
-    @JsonIgnore
+    @JsonIgnore                                                         // JSON 직렬화 시 무시 (응답에 비밀번호 노출 방지)
     private final String password;                                      // 해시 비밀번호
     private final Collection<? extends GrantedAuthority> authorities;   // 권한
 
@@ -69,18 +69,18 @@ public class UserPrincipal implements UserDetails {
      *
      * - 서비스/어댑터 계층에서 엔티티 정보를 읽고, 필요한 정보만 골라 UserPrincipal로 변환하여 반환
      * */
-    @Builder
-    private UserPrincipal(
-            Long id,
-            String username,
-            String password,
-            Collection<? extends GrantedAuthority> authorities,
-            boolean accountNonExpired,
-            boolean accountNonLocked,
-            boolean credentialsNonExpired,
-            boolean enabled
+    @Builder // 빌더 패턴 적용
+    private UserPrincipal( // @Builder 사용 시 생성자는 private으로 제한
+            Long id, // PK
+            String username, // 로그인 아이디
+            String password, // 해시 비밀번호
+            Collection<? extends GrantedAuthority> authorities, // 권한
+            boolean accountNonExpired, // 계정 만료 여부
+            boolean accountNonLocked, // 계정 잠금 여부
+            boolean credentialsNonExpired, // 비밀번호(자격) 만료 여부
+            boolean enabled // 활성화 여부
     ) {
-        this.id = id;
+        this.id = id; 
         this.username = username;
         this.password = password;
         this.authorities = authorities;

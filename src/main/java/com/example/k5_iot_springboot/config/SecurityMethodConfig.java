@@ -1,7 +1,7 @@
-package com.example.k5_iot_springboot.config;
+package com.example.k5_iot_springboot.config; // 패키지 선언
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.context.annotation.Configuration; // @Configuration 어노테이션 임포트
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity; // @EnableMethodSecurity 어노테이션 임포트
 
 @Configuration // 스프링 설정 클래스임을 명시
 @EnableMethodSecurity(prePostEnabled = true)
@@ -10,4 +10,4 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 // : @PreAuthorize, @PostAuthorize, @PreFilter, @PostFilter 같은
 //  , 어노테이션 기반 보안 기능 사용 가능
 // >> 메서드 단위에서 접근 권한을 세밀하게 제어 가능
-public class SecurityMethodConfig {}
+public class SecurityMethodConfig {} // 메서드 보안 설정 클래스
